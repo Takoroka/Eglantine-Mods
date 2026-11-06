@@ -1,101 +1,75 @@
-# Eglantine graphic packs
+# Eglantine community mods
 
-Game patches for [Eglantine](https://github.com/Djihads80/Eglantine), used through its Graphic Packs
-window (**Tools > Graphic Packs**, or **Graphic Packs** in a game's Add-Ons tab).
+The community mod list for [Eglantine](https://github.com/Djihads80/Eglantine). In Eglantine, open
+**Tools > Mod List** and click **Refresh list**:
+- **Listing:** it shows the mods here for the games in your game list.
+- **Installing:** **Install** copies a mod into `load/<title id>/<mod name>/`.
+- **Managing:** the game's Add-Ons tab enables and disables installed mods like any other mod.
 
-## Getting them
+Nothing is downloaded until you click **Refresh list**.
 
-- **From Eglantine:** click **Download / update packs** in the Graphic Packs window. This
-  repository is the default pack repository there. Eglantine downloads it and installs each pack
-  folder into `graphic_packs/` in its user folder.
-  - An update replaces the packs that came from here.
-  - A pack you made yourself is never overwritten, even if it has the same folder name as a pack
-    here.
-- **By hand:** copy pack folders into `graphic_packs/`.
+## Mods
 
-Packs are off until you enable them for a game. They take effect when the game boots.
-
-## Packs
-
-| Pack | Game | Presets | Credit |
+| Mod | Game | Game version | Credit |
 |---|---|---|---|
-| `MarioKartWorld_FPS` | Mario Kart World (0400C3F00006E000) | 60 FPS (default), 30 FPS, Dynamic (experimental) | Franz (FZout), Eglantine PR #403; dynamic mode based on PokeDinner 2.5.0 |
+| Mario Kart World - 30 FPS | Mario Kart World (0400C3F00006E000) | 1.8.0 (main build ID D00E4F399E411D0613AA8D26B1C02FEF) | Franz (FZout), Eglantine PR #403 |
+| Mario Kart World - Dynamic FPS | Mario Kart World (0400C3F00006E000) | 1.8.0 (main build ID D00E4F399E411D0613AA8D26B1C02FEF) | Franz (FZout), Eglantine PR #403; based on PokeDinner 2.5.0 |
 
-## Making a pack
+- **Alternatives:** the two Mario Kart World mods are alternatives, so enable only one.
+- **Game version:** their patches only apply to 1.8.0. Another version needs a new patch, and boots
+  unpatched until then.
 
-Any folder with a `rules.txt` is a pack:
+## Layout
 
 ```
-MyGame_Something/
-  rules.txt
-  presetA/patch.pattern       patch files, in the folders the presets name
-  presetB/<build id>.ips
+mods.json                                       the index Eglantine reads
+mods/<title id>/<mod name>/exefs/<build id>.ips one folder per mod, as load/<title id>/<mod name>/
+mods/<title id>/<mod name>/romfs/...
+mods/<title id>/<mod name>/cheats/...
 ```
 
-### rules.txt
+A mod folder holds exactly what would go in `load/<title id>/<mod name>/`. Its last part is the name
+the Add-Ons tab shows. It can hold what Eglantine's mod loader supports:
+- **exefs patches:** IPS or IPS32 named by the module's build ID, or IPSwitch `.pchtxt`.
+- **exefs file replacements.**
+- **`romfs/` files** (LayeredFS).
+- **Cheats.**
 
-```ini
-[Definition]
-# Comma-separated program IDs (required).
-titleIds = 0400C3F00006E000
-name = FPS
-# Where the pack shows in the list's tree.
-path = "Mario Kart World/FPS"
-description = One line.\nAnother line.
-version = 1
-author = You
+### exefs patches
 
-# One [Preset] section per choice in the preset list.
-[Preset]
-name = Off
-default = 1
+- **Matching a version:** an IPS patch applies only to the module whose build ID is its file name:
+  `exefs/<build id>.ips`.
+  - Eglantine logs a module's build ID when it loads, as `Patching NSO for name=main, build_id=...`.
+  - The name may leave off the build ID's trailing zeros.
+- **Offsets:** offsets are into the decompressed module with its 0x100-byte NSO header in front, so a
+  code offset is `0x100 + the offset in .text`. Offsets past 16 MB need IPS32.
 
-[Preset]
-name = On
-# Folders, relative to the pack folder.
-patches = on
+## Submitting a mod
+
+Open a pull request that adds:
+
+1. **The mod's folder** under `mods/<title id>/<mod name>/`.
+2. **An entry in `mods.json`:**
+
+```json
+{
+  "id": "short-unique-id",
+  "name": "Game - What it does",
+  "title_ids": ["0400C3F00006E000"],
+  "version": "1",
+  "author": "You",
+  "category": "Performance",
+  "description": "What it changes, which game version (and build ID) it's for, and what it conflicts with.",
+  "path": "mods/0400C3F00006E000/Game - What it does"
+}
 ```
 
-Comments go on their own lines (`#` or `;`). Text after a value is part of the value.
+- **`id`:** never changes. Eglantine uses it to recognize the installed mod.
+- **`version`:** raise it with every change. Installed copies then show "Update available".
+- **`path`:** the mod's folder. Its last part becomes the installed folder name.
+- **Game version:** say which game version a mod is for. A patch for a new game version can go in
+  the same folder as another `<build id>.ips`, since each applies only to its own build.
+- **Credit:** credit the original author in `author` or `description`.
 
-Without `[Preset]` sections, the pack applies the patch files in the folders listed in
-`[Definition] patches`, or in the pack folder itself.
-
-### Patch files
-
-| File | What it is |
-|---|---|
-| `<build id>.ips` | IPS or IPS32 for the module with that build ID. Offsets include the NSO's 0x100-byte header, as for exefs mods. |
-| `*.pchtxt` | IPSwitch. Its `@nsobid-` line picks the module. |
-| `*.pattern` | Pattern patches. They find the code by its instructions, so they keep working across game versions. |
-
-### Pattern patches
-
-```ini
-[Patch name]
-module = main
-pattern = 6B01013F 54000001/FF00001F B9421268 35000008/FF00001F
-near = 4..9 52A84E08
-count = 1
-write = 2 52800048
-find = 3..33 F9409660/FFFFFFE0
-write = 0 F9407660/FFFFFFE0
-```
-
-- A word is a 32-bit instruction in hex. `value/mask` compares only the masked bits, and `*` matches
-  any word.
-- **`pattern`:** consecutive words. Each place in the module's code where they all match is a site,
-  starting at the pattern's first word.
-- **`near = a..b word`:** a word in `site+a .. site+b` must match (offsets in words).
-- **`count`:** how many sites there must be (default 1). Otherwise the patch is skipped.
-- Then, in order, starting at the site:
-  - **`find = a..b word`:** exactly one word in that window must match; later steps work from it.
-  - **`write = offset word`:** writes at that offset. With a mask, only the masked bits change.
-
-If any step fails, that patch writes nothing, the game boots unpatched, and Eglantine's log
-(`Loader`) says why. The full format is in Eglantine's `docs/GraphicPacks.md`.
-
-## Contributing
-
-One folder per pack, and credit the author in `rules.txt`. Pattern patches are preferred over IPS,
-so a pack doesn't break with every game update.
+Please only submit content you made or have permission to share. Never submit game files,
+keys or firmware.

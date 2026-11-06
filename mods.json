@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "mods": [
+    {
+      "id": "mkw-30fps",
+      "name": "Mario Kart World - 30 FPS",
+      "title_ids": ["0400C3F00006E000"],
+      "version": "1",
+      "author": "Franz (FZout)",
+      "category": "Performance",
+      "description": "Makes Mario Kart World always use its native 30 FPS mode, at normal game speed. For game version 1.8.0 only (main build ID D00E4F399E411D0613AA8D26B1C02FEF); other versions boot unpatched. An alternative to \"Mario Kart World - Dynamic FPS\": enable only one of the two. From Eglantine PR #403 by Franz (FZout).",
+      "path": "mods/0400C3F00006E000/Mario Kart World - 30 FPS"
+    },
+    {
+      "id": "mkw-dynamic-fps",
+      "name": "Mario Kart World - Dynamic FPS",
+      "title_ids": ["0400C3F00006E000"],
+      "version": "1",
+      "author": "Franz (FZout)",
+      "category": "Performance",
+      "description": "Lets Mario Kart World switch between its 30 and 60 FPS modes by the whole frame time (CPU work and the GPU wait), so it keeps normal game speed when 60 FPS can't be held. Experimental. For game version 1.8.0 only (main build ID D00E4F399E411D0613AA8D26B1C02FEF); other versions boot unpatched. An alternative to \"Mario Kart World - 30 FPS\": enable only one of the two. From Eglantine PR #403 by Franz (FZout), based on the approach in PokeDinner 2.5.0.",
+      "path": "mods/0400C3F00006E000/Mario Kart World - Dynamic FPS"
+    }
+  ]
+}
