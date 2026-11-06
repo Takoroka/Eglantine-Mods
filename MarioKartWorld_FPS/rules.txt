@@ -1,0 +1,19 @@
+[Definition]
+titleIds = 0400C3F00006E000
+name = FPS
+path = "Mario Kart World/FPS"
+description = Chooses Mario Kart World's frame-rate mode. Takes effect when the game boots.\n\n30 FPS: the game always uses its native 30 FPS mode, at normal game speed.\nDynamic (experimental): the game switches between its 30 and 60 FPS modes by the whole frame time (CPU work and the GPU wait), so it keeps normal game speed when 60 FPS can't be held.\n\nThe patches find their code by pattern, so they work on any game version whose code still matches; otherwise the game boots unpatched and the log says so.\n\nBy Franz (FZout), Eglantine PR #403; the dynamic mode is based on the approach in PokeDinner 2.5.0.
+version = 1
+author = Franz (FZout)
+
+[Preset]
+name = 60 FPS (game default)
+default = 1
+
+[Preset]
+name = 30 FPS
+patches = 30fps
+
+[Preset]
+name = Dynamic (experimental)
+patches = dynamic
