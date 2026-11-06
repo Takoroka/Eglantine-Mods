@@ -5,8 +5,8 @@ window (**Tools > Graphic Packs**, or **Graphic Packs** in a game's Add-Ons tab)
 
 ## Getting them
 
-- **From Eglantine:** set this repository's URL as the pack repository in the Graphic Packs window
-  and click **Download / update packs**. Eglantine downloads the repository and installs each pack
+- **From Eglantine:** click **Download / update packs** in the Graphic Packs window. This
+  repository is the default pack repository there. Eglantine downloads it and installs each pack
   folder into `graphic_packs/` in its user folder.
   - An update replaces the packs that came from here.
   - A pack you made yourself is never overwritten, even if it has the same folder name as a pack
